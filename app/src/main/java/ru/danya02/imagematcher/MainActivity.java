@@ -1,19 +1,24 @@
 package ru.danya02.imagematcher;
 
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Adapter;
 
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+import net.rdrei.android.dirchooser.DirectoryChooserFragment;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +34,15 @@ public class MainActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.instantiateDatabase();
+
+        final DirectoryChooserConfig config = DirectoryChooserConfig.builder().initialDirectory(Environment.getExternalStorageDirectory().toString()).newDirectoryName("test").build();
+
+        mDialog = DirectoryChooserFragment.newInstance(config);
         FloatingActionButton fab = findViewById(R.id.fab_add_to_index);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                mDialog.show(getFragmentManager(), null);
             }
         });
     }
@@ -57,4 +65,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private DirectoryChooserFragment mDialog;
+    @Override
+    public void onSelectDirectory(@NonNull String path) {
+        Snackbar.make(findViewById(R.id.mainLayout), path, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+        mDialog.dismiss();
+    }
+
+    @Override
+    public void onCancelChooser() {
+        mDialog.dismiss();
+
+    }
 }
