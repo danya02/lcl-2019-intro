@@ -1,17 +1,19 @@
 package ru.danya02.imagematcher;
 
 import android.database.DataSetObserver;
-import android.database.DatabaseErrorHandler;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
 //        setSupportActionBar(toolbar);
 
         emptyLabel = findViewById(R.id.empty_list_label);
-        recyclerView = findViewById(R.id.rv_image_view);
+        recyclerView = findViewById(R.id.rv_category_view);
+
+        recyclerView.setAdapter((RecyclerView.Adapter) categoryAdapter);
 
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.instantiateDatabase();
@@ -41,62 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper databaseHelper;
 
+    ArrayList<ArrayList<String>> data;
+
     private View emptyLabel;
     private RecyclerView recyclerView;
-    private Adapter adapter = new Adapter() {
-        @Override
-        public void registerDataSetObserver(DataSetObserver observer) {
-
-        }
-
-        @Override
-        public void unregisterDataSetObserver(DataSetObserver observer) {
-
-        }
-
-        @Override
-        public int getCount() {
-            return 0;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return 0;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-    };
-
+    private HashMap<Integer, Adapter> individualCategoryAdapters;
+    private CategoryAdapter categoryAdapter = new CategoryAdapter(databaseHelper);
     void updateObjectVisibility(){
-        if (adapter.isEmpty()) {
+        if (categoryAdapter.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             emptyLabel.setVisibility(View.VISIBLE);
         } else {

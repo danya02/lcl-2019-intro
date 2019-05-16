@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class DatabaseHelper {
     private Context context;
 
@@ -86,4 +88,34 @@ public class DatabaseHelper {
         return mycat;
 
     }
+    public ArrayList<Integer> getCategories(){
+        Cursor catcursor = dbase.rawQuery("select id from category;",null);
+        ArrayList<Integer> outp = new ArrayList<>();
+        int idcolumn = catcursor.getColumnIndex("id");
+        while(catcursor.moveToNext()){
+            outp.add(catcursor.getInt(idcolumn));
+        }
+        catcursor.close();
+        return outp;
+    }
+
+    public ArrayList<Integer> getPicturesByCategory(int cat){
+        Cursor catcursor = dbase.rawQuery("select name from pictures where mycategory="+cat+" order by name;",null);
+        ArrayList<Integer> outp = new ArrayList<>();
+        int idcolumn = catcursor.getColumnIndex("id");
+        while(catcursor.moveToNext()){
+            outp.add(catcursor.getInt(idcolumn));
+        }
+        catcursor.close();
+        return outp;
+    }
+
+
+    public int getPictureCountByCategory(int cat){
+        Cursor catcursor = dbase.rawQuery("select name from pictures where mycategory="+cat+" order by name;",null);
+        int count = catcursor.getCount();
+        catcursor.close();
+        return count;
+    }
+
 }
