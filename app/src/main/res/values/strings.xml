@@ -4,4 +4,5 @@
     <string name="text_empty_field_main">There\'s nothing here…</string>
     <string name="text_empty_field_help">To begin, please press the button in the lower right corner.</string>
     <string name="prepared_statement_insert_picture">insert into picture (name) values (?)</string>
+    <string name="pragma_enable_foreignkey">pragma foreign_keys = on;</string>
 </resources>
