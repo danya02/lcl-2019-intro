@@ -24,7 +24,7 @@ public class DatabaseHelper {
         });
         dbase.execSQL("pragma foreign_keys = on;");
         dbase.execSQL("create table if not exists category (id integer primary key autoincrement);");
-        dbase.execSQL("create table if not exists picture (id integer primary key autoincrement, name string unique, foreign key(mycategory) references category(id) );");
+        dbase.execSQL("create table if not exists picture (id integer primary key autoincrement, name string unique, mycategory integer, foreign key(mycategory) references category(id) );");
         createPicStatement = dbase.compileStatement(context.getString(R.string.prepared_statement_insert_picture));
     }
 
