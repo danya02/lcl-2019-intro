@@ -10,14 +10,17 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder {
     public CategoryViewHolder(@NonNull View itemView) {
         super(itemView);
         pictureRecyclerView = itemView.findViewById(R.id.rv_pictures_in_category);
+        pictureRecyclerView.setAdapter(new PictureAdapter(myCat, myHelper));
     }
 
     private int myCat;
     private DatabaseHelper myHelper;
 
+
+
     public void rebindTo(int category, DatabaseHelper helper){
         myCat = category;
         myHelper = helper;
-        // TODO: add assign to adapter
+        ((PictureAdapter) pictureRecyclerView.getAdapter()).rebind(category, helper);
     }
 }

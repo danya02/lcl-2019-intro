@@ -58,6 +58,11 @@ public class DatabaseHelper {
 
     }
 
+    public void setPictureCategory(long picid, long catid){
+        setPictureCategory.bindLong(1, catid);
+        setPictureCategory.bindLong(2, picid);
+        setPictureCategory.executeUpdateDelete();
+    }
     private SQLiteStatement createCategoryStatement;
     private SQLiteStatement getPictureCategory;
     private SQLiteStatement setPictureCategory;
@@ -67,6 +72,7 @@ public class DatabaseHelper {
         dbase.beginTransaction();
         long mycat = createCategoryStatement.executeInsert();
         Log.d("dbaseHelper", "mycat: " + mycat);
+        if(ids!=null){
         for (long id : ids) {
 
             {
@@ -82,7 +88,7 @@ public class DatabaseHelper {
                 setPictureCategory.executeUpdateDelete();
             }
 
-        }
+        }}
         dbase.setTransactionSuccessful();
         dbase.endTransaction();
         return mycat;
@@ -92,27 +98,40 @@ public class DatabaseHelper {
         Cursor catcursor = dbase.rawQuery("select id from category;",null);
         ArrayList<Integer> outp = new ArrayList<>();
         int idcolumn = catcursor.getColumnIndex("id");
-        while(catcursor.moveToNext()){
+        catcursor.moveToFirst();
+        while(!catcursor.isAfterLast()){
             outp.add(catcursor.getInt(idcolumn));
+            catcursor.moveToNext();
         }
         catcursor.close();
         return outp;
     }
 
     public ArrayList<Integer> getPicturesByCategory(int cat){
-        Cursor catcursor = dbase.rawQuery("select name from pictures where mycategory="+cat+" order by name;",null);
+        Cursor catcursor = dbase.rawQuery("select name from picture where mycategory="+cat+" order by name;",null);
         ArrayList<Integer> outp = new ArrayList<>();
-        int idcolumn = catcursor.getColumnIndex("id");
-        while(catcursor.moveToNext()){
+        int idcolumn = catcursor.getColumnIndex("name");
+        catcursor.moveToFirst();
+        while(!catcursor.isAfterLast()){
             outp.add(catcursor.getInt(idcolumn));
+            catcursor.moveToNext();
         }
         catcursor.close();
         return outp;
     }
 
 
+    public String getPictureInCategory(int cat, int index){
+        Cursor catcursor = dbase.rawQuery("select name from picture where mycategory="+cat+" order by name;",null);
+        catcursor.move(index);
+        String outp = catcursor.getString(catcursor.getColumnIndex("name"));
+        catcursor.close();
+        return outp;
+    }
+
+
     public int getPictureCountByCategory(int cat){
-        Cursor catcursor = dbase.rawQuery("select name from pictures where mycategory="+cat+" order by name;",null);
+        Cursor catcursor = dbase.rawQuery("select name from picture where mycategory="+cat+" order by name;",null);
         int count = catcursor.getCount();
         catcursor.close();
         return count;
