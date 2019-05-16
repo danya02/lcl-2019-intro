@@ -1,6 +1,8 @@
 package ru.danya02.imagematcher;
 
 import android.database.DataSetObserver;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
         emptyLabel = findViewById(R.id.empty_list_label);
         recyclerView = findViewById(R.id.rv_image_view);
 
+        databaseHelper = new DatabaseHelper(this);
+        databaseHelper.instantiateDatabase();
+
         FloatingActionButton fab = findViewById(R.id.fab_add_to_index);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private View emptyLabel;
+    DatabaseHelper databaseHelper;
 
+    private View emptyLabel;
     private RecyclerView recyclerView;
     private Adapter adapter = new Adapter() {
         @Override
@@ -87,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
-
 
     void updateObjectVisibility(){
         if (adapter.isEmpty()) {
