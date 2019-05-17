@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Map;
+
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
     @NonNull
     @Override
@@ -13,12 +15,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
         View picturesListView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.image_category_item, viewGroup, false);
         CategoryViewHolder catHolder = new CategoryViewHolder(picturesListView);
         catHolder.rebindTo(i, dbhelper);
+        pictureAdapters.put((long) i, catHolder.getMyAdapter());
         return catHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoryViewHolder categoryViewHolder, int i) {
-        categoryViewHolder.rebindTo(i, dbhelper);
+    public void onBindViewHolder(@NonNull CategoryViewHolder catHolder, int i) {
+        pictureAdapters.remove((long) catHolder.getMyCat());
+        catHolder.rebindTo(i, dbhelper);
+        pictureAdapters.put((long) i, catHolder.getMyAdapter());
     }
 
     @Override
@@ -27,9 +32,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
     }
 
     private DatabaseHelper dbhelper;
+    private Map<Long, PictureAdapter> pictureAdapters;
 
-    public CategoryAdapter(DatabaseHelper databaseHelper){
+    public CategoryAdapter(DatabaseHelper databaseHelper, Map<Long, PictureAdapter>pictureAdapter){
         dbhelper = databaseHelper;
+        pictureAdapters = pictureAdapter;
     }
 
     public boolean isEmpty() {

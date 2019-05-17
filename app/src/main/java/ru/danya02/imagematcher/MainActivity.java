@@ -30,10 +30,12 @@ public class MainActivity extends FragmentActivity implements DirectoryChooserFr
         emptyLabel = findViewById(R.id.empty_list_label);
         recyclerView = findViewById(R.id.rv_category_view);
 
-        recyclerView.setAdapter((RecyclerView.Adapter) categoryAdapter);
+        recyclerView.setAdapter(categoryAdapter);
 
-        databaseHelper = new DatabaseHelper(this);
+        databaseHelper = new DatabaseHelper(this, categoryAdapter, pictureAdapters);
         databaseHelper.instantiateDatabase();
+
+        categoryAdapter = new CategoryAdapter(databaseHelper, pictureAdapters);
 
         final DirectoryChooserConfig config = DirectoryChooserConfig.builder().initialDirectory(Environment.getExternalStorageDirectory().toString()).newDirectoryName("test").build();
 
@@ -47,6 +49,14 @@ public class MainActivity extends FragmentActivity implements DirectoryChooserFr
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        databaseHelper.disconnectDatabase();
+        super.onDestroy();
+    }
+
+    HashMap<Long, PictureAdapter> pictureAdapters;
+
     DatabaseHelper databaseHelper;
 
     ArrayList<ArrayList<String>> data;
@@ -54,8 +64,9 @@ public class MainActivity extends FragmentActivity implements DirectoryChooserFr
     private View emptyLabel;
     private RecyclerView recyclerView;
     private HashMap<Integer, Adapter> individualCategoryAdapters;
-    private CategoryAdapter categoryAdapter = new CategoryAdapter(databaseHelper);
-    void updateObjectVisibility(){
+    private CategoryAdapter categoryAdapter;
+
+    void updateObjectVisibility() {
         if (categoryAdapter.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             emptyLabel.setVisibility(View.VISIBLE);
@@ -67,6 +78,7 @@ public class MainActivity extends FragmentActivity implements DirectoryChooserFr
 
 
     private DirectoryChooserFragment mDialog;
+
     @Override
     public void onSelectDirectory(@NonNull String path) {
         Snackbar.make(findViewById(R.id.mainLayout), path, Snackbar.LENGTH_LONG)
