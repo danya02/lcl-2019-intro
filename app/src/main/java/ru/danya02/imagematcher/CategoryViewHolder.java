@@ -1,17 +1,22 @@
 package ru.danya02.imagematcher;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 public class CategoryViewHolder extends RecyclerView.ViewHolder {
 
     private RecyclerView pictureRecyclerView;
+    private Context myContext;
 
-    public CategoryViewHolder(@NonNull View itemView) {
+    public CategoryViewHolder(@NonNull View itemView, @NonNull Context context) {
         super(itemView);
+        myContext = context;
         pictureRecyclerView = itemView.findViewById(R.id.rv_pictures_in_category);
         pictureRecyclerView.setAdapter(new PictureAdapter(myCat, myHelper));
+        pictureRecyclerView.setLayoutManager(new LinearLayoutManager(myContext));
     }
 
     private int myCat;
